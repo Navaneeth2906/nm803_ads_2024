@@ -11,6 +11,8 @@ import requests
 
 import pymysql
 
+import csv
+
 
 # This file accesses the data
 
