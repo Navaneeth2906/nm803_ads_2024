@@ -39,8 +39,8 @@ def plot_buildings_in_area(place_name, latitude, longitude):
   up_lat = latitude + 0.02/2.2
   lo_lat = latitude - 0.02/2.2
 
-  up_long = longitude + 0.02/2.2
-  lo_long = longitude - 0.02/2.2
+  up_long = longitude + 1/64
+  lo_long = longitude - 1/64
 
   tags = {
       "addr": ["housenumber", "street", "postcode"],
@@ -95,11 +95,12 @@ def count_pois_near_coordinates(latitude: float, longitude: float, tags: dict, d
         dict: A dictionary where keys are the OSM tags and values are the counts of POIs for each tag.
     """
 
-    degrees_around = (0.02/2.2) * distance_km  # remember that 0.02 is around 2.2km
-    north = latitude + degrees_around
-    south = latitude - degrees_around
-    west = longitude - degrees_around
-    east = longitude + degrees_around
+    degrees_lat = (0.02/2.2) * distance_km  
+    degrees_long = (1/64) * distance_km  
+    north = latitude + degrees_lat
+    south = latitude - degrees_lat
+    west = longitude - degrees_long
+    east = longitude + degrees_long
     pois = ox.geometries_from_bbox(north, south, east, west, tags)
 
     pois_df = pd.DataFrame(pois)

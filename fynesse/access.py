@@ -95,8 +95,8 @@ def get_buildings_data_from_osm(latitude, longitude):
     # Define latitude and longitude boundaries
     up_lat = latitude + 0.02 / 2.2
     lo_lat = latitude - 0.02 / 2.2
-    up_long = longitude + 0.02 / 2.2
-    lo_long = longitude - 0.02 / 2.2
+    up_long = longitude + 1 / 64
+    lo_long = longitude - 1 / 64
 
     # Define tags for OSM data retrieval
     tags = {
@@ -124,8 +124,8 @@ def get_buildings_data_from_prices_paid_dataset(latitude, longitude, conn):
   up_lat = latitude + 0.02/2.2
   lo_lat = latitude - 0.02/2.2
 
-  up_long = longitude + 0.02/2.2
-  lo_long = longitude - 0.02/2.2
+  up_long = longitude + 1/64
+  lo_long = longitude - 1/64
 
   cur = conn.cursor()
   cur.execute(f"SELECT pp.price, pp.date_of_transfer, pp.secondary_addressable_object_name, pp.primary_addressable_object_name, pp.street, pp.postcode, po.latitude, po.longitude FROM (SELECT * FROM pp_data WHERE date_of_transfer >= '2020-01-01') AS pp INNER JOIN postcode_data AS po ON po.postcode = pp.postcode WHERE po.latitude BETWEEN {lo_lat} AND {up_lat} AND po.longitude BETWEEN {lo_long} AND {up_long}")
