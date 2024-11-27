@@ -47,7 +47,7 @@ def plot_buildings_in_area(place_name, latitude, longitude):
       "building": True,
       "geometry": True
   }
-  pois = ox.features.features_from_bbox([west, south, east, north], tags)
+  pois = ox.features_from_bbox([west, south, east, north], tags)
 
 
   # we need to convert the coordinate reference system to meters
@@ -102,7 +102,7 @@ def count_pois_near_coordinates(latitude: float, longitude: float, tags: dict, d
     south = latitude - degrees_lat
     west = longitude - degrees_long
     east = longitude + degrees_long
-    pois = ox.geometries_from_bbox(north, south, east, west, tags)
+    pois = ox.features_from_bbox([west, south, east, north], tags)
 
     pois_df = pd.DataFrame(pois)
 
