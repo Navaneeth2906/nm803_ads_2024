@@ -36,18 +36,19 @@ def labelled(data):
 
 
 def plot_buildings_in_area(place_name, latitude, longitude):
-  up_lat = latitude + 0.02/2.2
-  lo_lat = latitude - 0.02/2.2
+  north = latitude + 0.02/2.2
+  south = latitude - 0.02/2.2
 
-  up_long = longitude + 1/64
-  lo_long = longitude - 1/64
+  east = longitude + 1/64
+  west = longitude - 1/64
 
   tags = {
       "addr": ["housenumber", "street", "postcode"],
       "building": True,
       "geometry": True
   }
-  pois = ox.geometries_from_bbox(up_lat, lo_lat, up_long, lo_long, tags)
+  pois = ox.features.features_from_bbox([west, south, east, north], tags)
+
 
   # we need to convert the coordinate reference system to meters
   pois['area_m2'] = pois.to_crs(epsg=32630)['geometry'].area
@@ -56,7 +57,7 @@ def plot_buildings_in_area(place_name, latitude, longitude):
   pois['has_full_address'] = pois[['addr:housenumber', 'addr:street', 'addr:postcode']].notnull().all(axis=1)
 
   # retrieve graph
-  graph = ox.graph_from_bbox(up_lat, lo_lat, up_long, lo_long)
+  graph = ox.graph_from_bbox(north, south, east, west)
 
   # Retrieve nodes and edges
   nodes, edges = ox.graph_to_gdfs(graph)
@@ -72,8 +73,8 @@ def plot_buildings_in_area(place_name, latitude, longitude):
   # Plot street edges
   edges.plot(ax=ax, linewidth=1, edgecolor="dimgray")
 
-  ax.set_xlim([lo_long, up_long])
-  ax.set_ylim([lo_lat, up_lat])
+  ax.set_xlim([west, east])
+  ax.set_ylim([south, north])
   ax.set_xlabel("longitude")
   ax.set_ylabel("latitude")
 
