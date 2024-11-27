@@ -106,7 +106,7 @@ def get_buildings_data_from_osm(latitude, longitude):
     }
 
     # Retrieve points of interest (POIs) based on bounding box
-    pois = ox.geometries_from_bbox(up_lat, lo_lat, up_long, lo_long, tags)
+    pois = ox.features.features_from_bbox([up_lat, lo_long, lo_lat, up_long], tags)
 
     # Convert coordinate reference system to UTM for area calculation in meters
     pois['area_m2'] = pois.to_crs(epsg=32630)['geometry'].area
