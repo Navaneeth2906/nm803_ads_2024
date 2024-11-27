@@ -57,7 +57,7 @@ def plot_buildings_in_area(place_name, latitude, longitude):
   pois['has_full_address'] = pois[['addr:housenumber', 'addr:street', 'addr:postcode']].notnull().all(axis=1)
 
   # retrieve graph
-  graph = ox.graph_from_bbox([north, south, east, west])
+  graph = ox.graph_from_bbox([west, south, east, north])
 
   # Retrieve nodes and edges
   nodes, edges = ox.graph_to_gdfs(graph)
