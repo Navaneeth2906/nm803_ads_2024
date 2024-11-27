@@ -93,10 +93,10 @@ def housing_upload_join_data(conn, year):
 
 def get_buildings_data_from_osm(latitude, longitude):
     # Define latitude and longitude boundaries
-    up_lat = latitude + 0.02 / 2.2
-    lo_lat = latitude - 0.02 / 2.2
-    up_long = longitude + 1 / 64
-    lo_long = longitude - 1 / 64
+    north = latitude + 0.02 / 2.2
+    south = latitude - 0.02 / 2.2
+    east = longitude + 1 / 64
+    west = longitude - 1 / 64
 
     # Define tags for OSM data retrieval
     tags = {
@@ -106,7 +106,7 @@ def get_buildings_data_from_osm(latitude, longitude):
     }
 
     # Retrieve points of interest (POIs) based on bounding box
-    pois = ox.features.features_from_bbox([up_lat, lo_long, lo_lat, up_long], tags)
+    pois = ox.features.features_from_bbox([west, south, east, north], tags)
 
     # Convert coordinate reference system to UTM for area calculation in meters
     pois['area_m2'] = pois.to_crs(epsg=32630)['geometry'].area
