@@ -91,6 +91,18 @@ def housing_upload_join_data(conn, year):
   conn.commit()
   print('Data stored for year: ' + str(year))
 
+
+def get_uk_data_from_osm(latitude, longitude, tags,  distance_km: float = 1.0):
+    north = latitude + (0.02 / 2.2) * distance_km
+    south = latitude - (0.02 / 2.2) * distance_km
+    east = longitude + (1 / 64) * distance_km
+    west = longitude - (1 / 64) * distance_km
+
+    pois = ox.features.features_from_bbox([west, south, east, north], tags)
+
+    return pois 
+
+
 def get_buildings_data_from_osm(latitude, longitude):
     # Define latitude and longitude boundaries
     north = latitude + 0.02 / 2.2
