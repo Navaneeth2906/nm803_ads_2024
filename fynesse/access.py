@@ -1,3 +1,4 @@
+import zipfile
 from .config import *
 
 """These are the types of import we might expect in this file
@@ -100,7 +101,7 @@ def get_uk_data_from_osm(latitude, longitude, tags,  distance_km: float = 1.0):
 
     pois = ox.features.features_from_bbox([west, south, east, north], tags)
 
-    return pois 
+    return pois.dropna()
 
 
 def get_buildings_data_from_osm(latitude, longitude):
@@ -148,3 +149,32 @@ def get_buildings_data_from_prices_paid_dataset(latitude, longitude, conn):
 
 
   return pd.DataFrame(results, columns=columns)
+
+def download_census_data(code, base_dir=''):
+  url = f'https://www.nomisweb.co.uk/output/census/2021/census2021-{code.lower()}.zip'
+  extract_dir = os.path.join(base_dir, os.path.splitext(os.path.basename(url))[0])
+
+  if os.path.exists(extract_dir) and os.listdir(extract_dir):
+    print(f"Files already exist at: {extract_dir}.")
+    return
+
+  os.makedirs(extract_dir, exist_ok=True)
+  response = requests.get(url)
+  response.raise_for_status()
+
+  with zipfile.ZipFile(io.BytesIO(response.content)) as zip_ref:
+    zip_ref.extractall(extract_dir)
+
+  print(f"Files extracted to: {extract_dir}")
+
+def load_census_data(code, level='msoa'):
+  return pd.read_csv(f'census2021-{code.lower()}/census2021-{code.lower()}-{level}.csv')
+
+def upload_to_table(name, engine, df):
+    try:
+        with engine.connect() as conn:
+            # Insert the DataFrame data into the `geography_data` table
+            df.to_sql(name=name, con=conn, if_exists='replace', index=False)
+            print("Data uploaded successfully!")
+    except Exception as e:
+        print(f"Error while uploading data: {e}")
