@@ -173,8 +173,30 @@ def load_census_data(code, level='msoa'):
 def upload_to_table(name, engine, df):
     try:
         with engine.connect() as conn:
-            # Insert the DataFrame data into the `geography_data` table
             df.to_sql(name=name, con=conn, if_exists='replace', index=False)
             print("Data uploaded successfully!")
     except Exception as e:
         print(f"Error while uploading data: {e}")
+
+def upload_table_in_chunks(engine, df, table_name, chunk_size=1000):
+    """This is better for uploading large dataframes to tables"""
+    try:
+        with engine.connect() as conn:
+            for i in range(0, len(df), chunk_size):
+                chunk = df.iloc[i:i+chunk_size]
+                chunk.to_sql(name=table_name, con=conn, if_exists='append', index=False)
+                print(f"Chunk {i} to {i+chunk_size} uploaded successfully!")
+
+        print(f"All data uploaded successfully to table '{table_name}'")
+
+    except Exception as e:
+        print(f"Error while uploading data: {e}")
+        
+def data_check(conn, table_name):
+    cur = conn.cursor()
+    cur.execute(f"""SELECT * FROM {table_name}""")
+    results = cur.fetchall()
+    columns = [desc[0] for desc in cur.description]
+
+    return pd.DataFrame(results, columns=columns)
+  
